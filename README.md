@@ -45,6 +45,16 @@ per session vs tokens of map loaded).
 4. The maps were **verified** (every fact checked against the repo before writing). A wrong
    map is worse than no map — this pilot says nothing in favor of unverified boilerplate.
 
+## Related work
+
+[capn-hook](https://github.com/CyrusNuevoDia/capn-hook) reaches the same diagnosis from the
+product side — persistent memory for coding agents, with sha256 cache-busting — and its eval
+measured **77% fewer tokens** on repeat questions (60 questions, 5 production codebases).
+Convergent number, complementary layer: capn charts dynamic Q→files discoveries as the agent
+works; a CLAUDE.md is the verified static top-of-repo layer (identity, entry points, run
+commands, constraints). An agent plausibly wants both. Independent evals landing in the same
+band (77% vs 68%) is the most useful kind of corroboration for an n=6 pilot.
+
 ## Pre-registration
 
 [`PROTOCOL.md`](PROTOCOL.md) — hypothesis, subjects, prompt, model, metrics, decision rule,
