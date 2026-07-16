@@ -55,6 +55,17 @@ works; a CLAUDE.md is the verified static top-of-repo layer (identity, entry poi
 commands, constraints). An agent plausibly wants both. Independent evals landing in the same
 band (77% vs 68%) is the most useful kind of corroboration for an n=6 pilot.
 
+**Follow-up (2026-07-16):** we then ran a second pre-registered pilot testing whether capn-style
+dynamic memory adds value *on top of* verified maps, on this fleet's two deepest repos (12 fixed
+questions, 2 arms, correctness judged against repo ground truth before any aggregate was
+computed). Verdict under the locked decision rule: **killed.** Median token ratio 0.84 vs the
+required 0.50, and 4/12 correctness violations in the memory arm — including one confidently
+recalled wrong answer the cold arm got right. Two honest readings: at this fleet's repo scale,
+verified maps already absorb most of the discovery tax; and none of this refutes capn-hook's own
+77% on much larger codebases with no map baseline. Different layer, different niche — measure in
+*your* setting before adopting either. We kill things the same way we ship them: with the
+protocol written first and the number reported either way.
+
 ## Pre-registration
 
 [`PROTOCOL.md`](PROTOCOL.md) — hypothesis, subjects, prompt, model, metrics, decision rule,
