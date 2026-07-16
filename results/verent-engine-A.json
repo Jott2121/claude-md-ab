@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 1,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 16861,
+  "cache_read_input_tokens": 23119,
+  "output_tokens": 453,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 16861,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 453,
+    "cache_read_input_tokens": 23119,
+    "cache_creation_input_tokens": 16861,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 16861
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.11490270000000001,
+ "duration_ms": 6795,
+ "result": "Verent Engine is Verent's config-driven client-automation engine \u2014 one engine runs any automation (lead follow-up, document drafts, missed-call handling, maintenance triage, quote intake, custom flows) for any client, driven entirely by a per-client JSON config.\n\nMain entry points:\n- `verent/store.py` \u2014 data core\n- `verent/client.py` \u2014 config load/validate\n- `verent/automations.py` \u2014 the engine (`run_automation`)\n- `verent/providers.py` \u2014 model seam (`FakeProvider`/`ClaudeCliProvider`)\n- `clients/*.json` \u2014 per-client config\n- `web/console.py`, `web/cockpit.html` \u2014 UI\n\nTests (25, stdlib-only, TDD):\n```\nPYTHONPATH=. python3 -m unittest discover -s tests\n```\n\nStatus: active, idempotent, human-gated (agents draft, humans approve sends)."
+}

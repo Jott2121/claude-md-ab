@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 2,
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 17674,
+  "cache_read_input_tokens": 62698,
+  "output_tokens": 498,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17674,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 254,
+    "cache_read_input_tokens": 39579,
+    "cache_creation_input_tokens": 1214,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1214
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.1323354,
+ "duration_ms": 8519,
+ "result": "This is **hunt-prospector**, a HuntDialed Reddit draft-assistant: you manually find a promising thread, paste it in, and the tool drafts a value-first reply (warm or offer mode) rather than auto-scanning/posting, since Reddit gates its API against outreach.\n\nMain entry points:\n- `quickdraft.py` \u2014 CLI: paste a thread, get relevance read + draft (clipboard + log)\n- `draft.py` \u2014 prompt guardrails (warm/offer modes, injection fence, URL-strip)\n- `score.py` \u2014 relevance scoring\n- `models.py` \u2014 Lead data shape\n\nTests: `python3 -m pytest` (19 tests in `test_prospector.py` covering scoring, draft guardrails, thread parsing)."
+}

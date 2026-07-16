@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 1,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 17910,
+  "cache_read_input_tokens": 23119,
+  "output_tokens": 191,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17910,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 191,
+    "cache_read_input_tokens": 23119,
+    "cache_creation_input_tokens": 17910,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 17910
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.1172667,
+ "duration_ms": 5338,
+ "result": "This project is HuntDialed Prospector \u2014 a tool that drafts value-first replies to hunter forum/Reddit threads for Jeff to manually post (never auto-scans or auto-posts, keeping the account ToS-safe).\n\nMain entry points:\n- `quickdraft.py` \u2014 paste a thread, get a relevance read + draft copied to clipboard and logged\n- `draft.py` \u2014 prompt guardrails and prompt-injection fencing\n- `score.py` \u2014 relevance scoring\n- `models.py` \u2014 data models\n\nTests: `python3 -m pytest` (19 tests)"
+}

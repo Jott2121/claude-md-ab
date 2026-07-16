@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 2,
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 17542,
+  "cache_read_input_tokens": 63146,
+  "output_tokens": 648,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17542,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 37,
+    "cache_read_input_tokens": 40027,
+    "cache_creation_input_tokens": 634,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 634
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.13392779999999999,
+ "duration_ms": 9645,
+ "result": "Test command: `pytest` (run from repo root \u2014 `pyproject.toml` and `tests/` are both there)."
+}

@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 1,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 16846,
+  "cache_read_input_tokens": 23119,
+  "output_tokens": 403,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 16846,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 403,
+    "cache_read_input_tokens": 23119,
+    "cache_creation_input_tokens": 16846,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 16846
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.1140627,
+ "duration_ms": 7651,
+ "result": "This is a graph-guard: a typed knowledge graph layered behind a RAG retriever, letting multi-hop questions get answered via graph traversal instead of pure similarity, with a measured comparison against the heavier RDF/OWL/SHACL/SPARQL semantic stack.\n\nMain entry points:\n- `graph_guard/` \u2014 the core package\n- `examples/run_sample.py` \u2014 runnable demo, no API key needed\n- `eval/` \u2014 evaluation harness (measured +14% hit@10, +26% MRR on multi-hop)\n- `docs/` \u2014 documentation\n\nSetup: `pip install -e . && python examples/run_sample.py`\n\nTests: `pytest` (137 tests, 97% coverage)\n\nCurrently on branch `fix/delete-unreachable-default`, one uncommitted file (CLAUDE.md)."
+}

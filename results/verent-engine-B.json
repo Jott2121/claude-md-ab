@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 5,
+ "usage": {
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 22399,
+  "cache_read_input_tokens": 190027,
+  "output_tokens": 928,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 22399,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 270,
+    "cache_read_input_tokens": 43965,
+    "cache_creation_input_tokens": 1553,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1553
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.2053521,
+ "duration_ms": 15699,
+ "result": "**verent-engine** is Verent's config-driven automation engine: it turns a client JSON config (voice, hours, KB, automations) plus an inbound message into a human-gated draft response, via one generic engine (`run_automation`) rather than per-client code. Stdlib-only, no pip deps.\n\nCore modules: `verent/store.py` (data core), `verent/client.py` (config loading), `verent/automations.py` (the engine itself), `verent/providers.py` (model seam). Entry points: `bin/run_client.py` (CLI demo), `web/console.py` (live browser console), `web/cockpit.html` (sales demo UI).\n\nTests:\n```bash\nPYTHONPATH=. python3 -m unittest discover -s tests\n```\n25 stdlib `unittest` tests, no pip install needed."
+}

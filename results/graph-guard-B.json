@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 2,
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 18700,
+  "cache_read_input_tokens": 62686,
+  "output_tokens": 562,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18700,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 240,
+    "cache_read_input_tokens": 39567,
+    "cache_creation_input_tokens": 2252,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 2252
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.13944779999999998,
+ "duration_ms": 10660,
+ "result": "**graph-guard** is a knowledge-graph retrieval layer for RAG: it builds a typed graph over a personal knowledge vault so retrieval can follow multi-hop connections between facts, not just lexical similarity. It also ships an optional RDF/OWL/SPARQL \"Tier B\" enterprise stack and measures whether that reasoning layer actually improves retrieval (it doesn't \u2014 it ties Tier A).\n\n- **Entry points**: `graph_guard-build` CLI (`graph_guard/build_cli.py`), and `examples/run_sample.py` for a no-API-key runnable demo.\n- **Tests**: `pytest` (testpaths = `tests/`), run via:\n```\npytest\n```"
+}

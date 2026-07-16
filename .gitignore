@@ -1,0 +1,3 @@
+results/*.err
+results/*.dropped
+.DS_Store

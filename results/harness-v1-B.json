@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 6,
+ "usage": {
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 23227,
+  "cache_read_input_tokens": 190265,
+  "output_tokens": 1131,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 23227,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 310,
+    "cache_read_input_tokens": 44529,
+    "cache_creation_input_tokens": 1817,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 1817
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.21343649999999997,
+ "duration_ms": 17860,
+ "result": "This is **Harness v1** \u2014 a model-agnostic agent coding harness (Python, stdlib-only core) that runs a coding task through a sandboxed tool-loop builder, deterministic gates (tests/secrets/imports), a cost budget check, a fail-closed ship gate, and a hash-chained ledger receipt, with optional cross-lineage review.\n\n- **Entry points**: CLI at `harness_v1/cli.py` (installed as the `harness` script; also runnable via `python -m harness_v1`), with core logic in `runtime.py`, `gates.py`, `bakeoff.py`, `oracle.py`, `ledger.py`, `cost.py`.\n- **Example run**: `python -m harness_v1 bakeoff --providers fake --budget 5 --pack tasks/pack_v1`\n- **Tests**: `pytest` (config in `pyproject.toml` points `testpaths` at `tests/`)"
+}

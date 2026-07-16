@@ -1,0 +1,37 @@
+{
+ "sanitized": "telemetry and final answer only; raw transcript withheld (embeds repo file contents)",
+ "num_turns": 3,
+ "usage": {
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 21399,
+  "cache_read_input_tokens": 103072,
+  "output_tokens": 720,
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 21399,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 287,
+    "cache_read_input_tokens": 40329,
+    "cache_creation_input_tokens": 4189,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 4189
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard"
+ },
+ "total_cost_usd": 0.1701336,
+ "duration_ms": 10914,
+ "result": "**nitro-ceo-agent** is a CEO reporting agent (`nitro_agent` Python package) that pulls data from QuickBooks and RealGreen, builds Excel/PDF reports, summarizes them, and delivers a summary \u2014 with mock/live connector seams and a Windows bootstrap installer.\n\nEntry points:\n- CLI: `src/nitro_agent/__main__.py` (run via `python -m nitro_agent`)\n- Core flow: `orchestrator.py` ties together connectors \u2192 `builder.py` (Excel/PDF) \u2192 `summarizer.py` \u2192 `delivery.py`\n- `doctor_check.py` is a self-check/diagnostics command\n- `config.py`/`models.py` hold config and data models\n\nTests: `pytest` (configured via `pyproject.toml`, tests in `tests/`, `src` on pythonpath)."
+}
