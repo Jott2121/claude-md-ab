@@ -151,7 +151,32 @@ def test_excluded_dirs_are_skipped(tmp_path: Path) -> None:
     egg = tmp_path / "x.egg-info" / "PKG-INFO"
     egg.parent.mkdir()
     egg.write_text("zorblax\n", encoding="utf-8")
-    assert scan([junk, egg], digests) == []
+    clean = tmp_path / "README.md"
+    clean.write_text("clean\n", encoding="utf-8")
+    assert scan([junk, egg, clean], digests, root=tmp_path) == []
+
+
+def test_zero_scanned_files_fails_closed(tmp_path: Path) -> None:
+    digests = load_digests(_hash_file(tmp_path, "zorblax"))
+    junk = tmp_path / "build" / "out.txt"
+    junk.parent.mkdir()
+    junk.write_text("zorblax\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="no files were scanned"):
+        scan([junk], digests, root=tmp_path)
+    repo = _git_repo(tmp_path / "only-junk", {"dist/out.txt": "Zorblax Quintet\n"})
+    (repo / ".github" / "blocked-terms.sha256").write_text(f"{digest(PLANTED)}\n", encoding="utf-8")
+    proc = _cli("--root", str(repo))
+    assert proc.returncode == 2
+    assert "no files were scanned" in proc.stderr
+
+
+def test_explicit_path_under_an_excluded_ancestor_is_scanned(tmp_path: Path) -> None:
+    target = tmp_path / "build" / "dist" / "note.txt"
+    target.parent.mkdir(parents=True)
+    target.write_text("Zorblax Quintet\n", encoding="utf-8")
+    digests = load_digests(_hash_file(tmp_path, PLANTED))
+    assert len(scan([target], digests, root=ROOT)) == 1
+    assert len(scan([target], digests)) == 1
 
 
 def test_excluded_names_above_the_repo_do_not_skip_files(tmp_path: Path) -> None:

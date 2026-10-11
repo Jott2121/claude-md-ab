@@ -103,16 +103,17 @@ def candidates(text: str) -> Iterator[tuple[int, str]]:
 def is_excluded(path: Path, root: Path | None = None) -> bool:
     """True when a directory inside the scanned tree is junk.
 
-    Names in ``EXCLUDED_DIRS`` apply only under ``root``. Ancestors of the
-    repo, and the repo directory itself, do not count: a checkout under
-    ``build/`` or named ``venv`` is still scanned.
+    Names in ``EXCLUDED_DIRS`` apply only to path parts below ``root``.
+    Ancestors of the repo, and the repo directory itself, never count: a
+    checkout under ``build/`` or named ``venv`` is still scanned. A path with
+    no root, or outside it, was named explicitly and is never excluded.
     """
-    parts = path.parts
-    if root is not None:
-        try:
-            parts = path.resolve().relative_to(root.resolve()).parts
-        except ValueError:
-            parts = path.parts
+    if root is None:
+        return False
+    try:
+        parts = path.resolve().relative_to(root.resolve()).parts
+    except ValueError:
+        return False
     return any(part in EXCLUDED_DIRS or part.endswith(".egg-info") for part in parts)
 
 
@@ -139,9 +140,11 @@ def scan(
     root: Path | None = None,
 ) -> list[str]:
     hits: list[str] = []
+    scanned = 0
     for path in paths:
         if is_excluded(path, root) or path.is_symlink() or path.resolve() in skip:
             continue
+        scanned += 1
         try:
             text = path.read_bytes().decode("utf-8", errors="replace")
         except OSError as exc:
@@ -156,6 +159,8 @@ def scan(
             for number, line in enumerate(text.splitlines(), start=1):
                 if markers.search(line):
                     hits.append(f"{path}:{number}: blocked term ({ENV_VAR} marker)")
+    if scanned == 0:
+        raise ConfigError("no files were scanned (all skipped or excluded)")
     return hits
 
 
