@@ -154,6 +154,25 @@ def test_excluded_dirs_are_skipped(tmp_path: Path) -> None:
     assert scan([junk, egg], digests) == []
 
 
+def test_excluded_names_above_the_repo_do_not_skip_files(tmp_path: Path) -> None:
+    """Ancestors and the repo directory itself are not in-repo junk dirs."""
+    repo = _git_repo(tmp_path / "venv" / "build", {"README.md": "Zorblax Quintet\n"})
+    renamed = repo.parent / "dist"
+    repo.rename(renamed)
+    proc = _cli("--root", str(renamed), env_terms=MARKER)
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "README.md:1: blocked term" in proc.stdout
+
+
+def test_in_repo_junk_stays_skipped_when_an_ancestor_is_excluded(tmp_path: Path) -> None:
+    repo = _git_repo(
+        tmp_path / "venv",
+        {"README.md": "clean\n", "node_modules/pkg.js": "Zorblax Quintet\n"},
+    )
+    proc = _cli("--root", str(repo), env_terms=MARKER)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
 @pytest.mark.parametrize(
     "contents",
     [None, "", "# only a comment\n\n"],

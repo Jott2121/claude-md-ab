@@ -100,8 +100,20 @@ def candidates(text: str) -> Iterator[tuple[int, str]]:
             yield number, f"{word} {words[index + 1][1]}"
 
 
-def is_excluded(path: Path) -> bool:
-    return any(part in EXCLUDED_DIRS or part.endswith(".egg-info") for part in path.parts)
+def is_excluded(path: Path, root: Path | None = None) -> bool:
+    """True when a directory inside the scanned tree is junk.
+
+    Names in ``EXCLUDED_DIRS`` apply only under ``root``. Ancestors of the
+    repo, and the repo directory itself, do not count: a checkout under
+    ``build/`` or named ``venv`` is still scanned.
+    """
+    parts = path.parts
+    if root is not None:
+        try:
+            parts = path.resolve().relative_to(root.resolve()).parts
+        except ValueError:
+            parts = path.parts
+    return any(part in EXCLUDED_DIRS or part.endswith(".egg-info") for part in parts)
 
 
 def tracked_files(root: Path) -> list[Path]:
@@ -124,10 +136,11 @@ def scan(
     digests: frozenset[str],
     markers: re.Pattern[str] | None = None,
     skip: frozenset[Path] = frozenset(),
+    root: Path | None = None,
 ) -> list[str]:
     hits: list[str] = []
     for path in paths:
-        if is_excluded(path) or path.is_symlink() or path.resolve() in skip:
+        if is_excluded(path, root) or path.is_symlink() or path.resolve() in skip:
             continue
         try:
             text = path.read_bytes().decode("utf-8", errors="replace")
@@ -161,7 +174,7 @@ def main(argv: list[str] | None = None) -> int:
         digests = load_digests(hash_file)
         markers = load_markers(os.environ.get(ENV_VAR))
         paths = [Path(arg) for arg in args] if args else tracked_files(root)
-        hits = scan(paths, digests, markers, skip=frozenset({hash_file.resolve()}))
+        hits = scan(paths, digests, markers, skip=frozenset({hash_file.resolve()}), root=root)
     except ConfigError as exc:
         print(f"blocked-terms: {exc}", file=sys.stderr)
         return 2
