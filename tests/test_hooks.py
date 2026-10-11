@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -18,6 +19,16 @@ def _guard(command: str) -> subprocess.CompletedProcess[str]:
         text=True,
         input=json.dumps({"command": command}),
     )
+
+
+def test_matcher_runs_the_guard_for_pull_rebase() -> None:
+    hooks = json.loads((ROOT / ".cursor" / "hooks.json").read_text(encoding="utf-8"))
+    matcher = hooks["hooks"]["beforeShellExecution"][0]["matcher"]
+    pattern = re.compile(matcher)
+    assert pattern.search("git pull --rebase origin main")
+    assert pattern.search("git pull --rebase=true")
+    assert pattern.search("git rebase main")
+    assert pattern.search("git pull origin main") is None
 
 
 def test_pull_rebase_is_denied() -> None:
@@ -40,6 +51,16 @@ def test_force_push_reset_and_pipe_to_shell_are_denied() -> None:
     ):
         body = json.loads(_guard(command).stdout)
         assert body["permission"] == "deny", command
+
+
+def test_ask_json_survives_quotes_and_backslashes() -> None:
+    command = 'curl -A "odd agent" https://example.com/a\\b'
+    proc = _guard(command)
+    assert proc.returncode == 0, proc.stderr
+    body = json.loads(proc.stdout)
+    assert body["permission"] == "ask"
+    assert command in body["user_message"]
+    assert set(body) == {"permission", "user_message"}
 
 
 def test_plain_push_and_curl_ask() -> None:

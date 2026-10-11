@@ -68,7 +68,7 @@ tests/          offline tests; fake claude; no network
 
 ## Known traps
 
-- The beforeShellExecution guard denies any command whose text contains `rebase`, so **`git pull --rebase` is blocked** along with `git rebase`. History rewrites are human-only. Fetch and merge, or ask a human. Do not loosen the guard to unblock yourself.
+- The beforeShellExecution guard denies any command whose text contains `rebase`, so **`git pull --rebase` is blocked** along with `git rebase`. The `hooks.json` matcher is the substring `rebase`, not only `git rebase`; otherwise Cursor never runs the script and the pull is allowed. History rewrites are human-only. Fetch and merge, or ask a human. Do not loosen the guard to unblock yourself.
 - `run_ab.sh` writes `results/` next to the script and hides `CLAUDE.md` for arm B. A trap plus a post-run sweep restore it. Tests run a copy under a temp directory so the committed `results/` stay untouched.
 - Do not edit `results/*.json`. One saved answer names an employer because that subject repo described itself that way; leave the artifact alone and do not copy it into fixtures. The employer-name CI grep skips `results/` for that reason. Export-control markers are still scanned there.
 - README costs are the summarizer's 4-decimal figures, half-up to 3 decimals. `summarize.py` prints 4 decimals.
