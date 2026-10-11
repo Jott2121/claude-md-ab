@@ -6,11 +6,15 @@ terms themselves never appear in the tree. Each file is lowercased and split
 into alphanumeric words; every word and every adjacent two-word phrase (joined
 by one space) is hashed and compared against the list.
 
-Extra plaintext terms can come from the BLOCKED_TERMS env var (comma-separated,
-e.g. a CI secret). Hits are reported by path, line, and digest prefix only.
+The EMPLOYER_MARKERS env var (e.g. an Actions secret of the same name) may add
+a case-insensitive regex alternation such as "foo|bar baz". It only adds to the
+hash list; the hash list is required whether or not the variable is set.
+Hits are reported by path, line, and digest prefix or "marker" only, never the
+matched text.
 
 Exit codes: 0 clean, 1 blocked term found, 2 configuration or read error.
-A missing, empty, or malformed hash file is an error, so the check fails closed.
+A missing, empty, or malformed hash file, or an invalid EMPLOYER_MARKERS regex,
+is an error, so the check fails closed.
 """
 
 from __future__ import annotations
@@ -25,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HASH_FILE = ROOT / ".github" / "blocked-terms.sha256"
-ENV_VAR = "BLOCKED_TERMS"
+ENV_VAR = "EMPLOYER_MARKERS"
 EXCLUDED_DIRS = frozenset(
     {
         ".git",
@@ -53,11 +57,7 @@ def digest(term: str) -> str:
     return hashlib.sha256(term.encode("utf-8")).hexdigest()
 
 
-def normalize(term: str) -> str:
-    return " ".join(_WORD.findall(term.lower()))
-
-
-def load_digests(hash_file: Path, env_terms: str | None) -> frozenset[str]:
+def load_digests(hash_file: Path) -> frozenset[str]:
     try:
         text = hash_file.read_text(encoding="utf-8")
     except OSError as exc:
@@ -72,11 +72,19 @@ def load_digests(hash_file: Path, env_terms: str | None) -> frozenset[str]:
         digests.add(line)
     if not digests:
         raise ConfigError(f"{hash_file} has no digests")
-    for term in (env_terms or "").split(","):
-        normalized = normalize(term)
-        if normalized:
-            digests.add(digest(normalized))
     return frozenset(digests)
+
+
+def load_markers(value: str | None) -> re.Pattern[str] | None:
+    if value is None or not value.strip():
+        return None
+    try:
+        pattern = re.compile(value.strip(), re.IGNORECASE)
+    except re.error as exc:
+        raise ConfigError(f"{ENV_VAR} is not a valid regex: {exc}") from exc
+    if pattern.search(""):
+        raise ConfigError(f"{ENV_VAR} matches the empty string")
+    return pattern
 
 
 def candidates(text: str) -> Iterator[tuple[int, str]]:
@@ -111,10 +119,15 @@ def tracked_files(root: Path) -> list[Path]:
     return [root / name for name in names]
 
 
-def scan(paths: Iterable[Path], digests: frozenset[str]) -> list[str]:
+def scan(
+    paths: Iterable[Path],
+    digests: frozenset[str],
+    markers: re.Pattern[str] | None = None,
+    skip: frozenset[Path] = frozenset(),
+) -> list[str]:
     hits: list[str] = []
     for path in paths:
-        if is_excluded(path) or path.is_symlink():
+        if is_excluded(path) or path.is_symlink() or path.resolve() in skip:
             continue
         try:
             text = path.read_bytes().decode("utf-8", errors="replace")
@@ -126,6 +139,10 @@ def scan(paths: Iterable[Path], digests: frozenset[str]) -> list[str]:
             if found in digests and (number, found) not in seen:
                 seen.add((number, found))
                 hits.append(f"{path}:{number}: blocked term (sha256 {found[:12]}...)")
+        if markers is not None:
+            for number, line in enumerate(text.splitlines(), start=1):
+                if markers.search(line):
+                    hits.append(f"{path}:{number}: blocked term ({ENV_VAR} marker)")
     return hits
 
 
@@ -141,9 +158,10 @@ def main(argv: list[str] | None = None) -> int:
         hash_file = root / ".github" / "blocked-terms.sha256"
         args = args[2:]
     try:
-        digests = load_digests(hash_file, os.environ.get(ENV_VAR))
+        digests = load_digests(hash_file)
+        markers = load_markers(os.environ.get(ENV_VAR))
         paths = [Path(arg) for arg in args] if args else tracked_files(root)
-        hits = scan(paths, digests)
+        hits = scan(paths, digests, markers, skip=frozenset({hash_file.resolve()}))
     except ConfigError as exc:
         print(f"blocked-terms: {exc}", file=sys.stderr)
         return 2
@@ -152,7 +170,8 @@ def main(argv: list[str] | None = None) -> int:
     if hits:
         print(f"blocked-terms: {len(hits)} hit(s)")
         return 1
-    print(f"blocked-terms: ok ({len(paths)} files, {len(digests)} digests)")
+    extra = f", {ENV_VAR} set" if markers is not None else ""
+    print(f"blocked-terms: ok ({len(paths)} files, {len(digests)} digests{extra})")
     return 0
 
 

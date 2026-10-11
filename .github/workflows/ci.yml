@@ -42,10 +42,11 @@ jobs:
         with: { python-version: "3.12" }
       # Employer terms live only as SHA-256 digests in .github/blocked-terms.sha256.
       # The scanner covers every tracked file (results/ included) and exits non-zero
-      # if the digest file is missing, empty, or malformed. BLOCKED_TERMS is optional.
+      # if the digest file is missing, empty, or malformed, with or without the
+      # optional EMPLOYER_MARKERS secret (an extra regex; never a substitute).
       - name: Block hashed employer terms (whole tree)
         env:
-          BLOCKED_TERMS: ${{ secrets.BLOCKED_TERMS }}
+          EMPLOYER_MARKERS: ${{ secrets.EMPLOYER_MARKERS }}
         run: python3 scripts/scan_blocked_terms.py
       # .cursor, AGENTS.md, and .github state the export-control prohibition and would match themselves.
       - name: Block export-control markers and committed build junk

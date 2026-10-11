@@ -154,9 +154,9 @@ def test_malformed_input_fails_closed() -> None:
 def _scan_hook(
     target: Path, cwd: Path, hook: Path | None = None, env_terms: str = ""
 ) -> subprocess.CompletedProcess[str]:
-    env = {k: v for k, v in os.environ.items() if k != "BLOCKED_TERMS"}
+    env = {k: v for k, v in os.environ.items() if k != "EMPLOYER_MARKERS"}
     if env_terms:
-        env["BLOCKED_TERMS"] = env_terms
+        env["EMPLOYER_MARKERS"] = env_terms
     return subprocess.run(
         ["bash", str(hook or HOOKS / "format-and-scan.sh")],
         check=False,
