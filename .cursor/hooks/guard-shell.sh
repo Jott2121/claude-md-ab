@@ -21,11 +21,20 @@ ask() {
 if [ -z "${cmd//[[:space:]]/}" ]; then
   deny "Shell guard blocked a missing command."
 fi
+# Flags are not required to sit next to the subcommand: `git push origin --force`,
+# `git push origin -f`, and `git reset HEAD --hard` are still denials. `-f` has to be
+# its own short-option token so a ref like my-feature is not treated as a force push.
+force_short='(^|[[:space:]])-[A-Za-z]*f[A-Za-z]*($|[[:space:]])'
+if [[ "$cmd" == *push* && ( "$cmd" == *--force* || "$cmd" =~ $force_short ) ]]; then
+  deny "Force-push blocked by repo policy."
+fi
+if [[ "$cmd" == *reset* && "$cmd" == *--hard* ]]; then
+  deny "History rewrite blocked by repo policy. This includes git pull --rebase."
+fi
 # SC2016: the $HOME arm matches the literal characters, not an expanded path.
 # shellcheck disable=SC2016
 case "$cmd" in
-  *"push --force"*|*"push -f"*|*"--force-with-lease"*) deny "Force-push blocked by repo policy." ;;
-  *"reset --hard"*|*"rebase"*)                        deny "History rewrite blocked by repo policy. This includes git pull --rebase." ;;
+  *"rebase"*)                                         deny "History rewrite blocked by repo policy. This includes git pull --rebase." ;;
   *"git tag"*|*"twine upload"*|*"uv publish"*|*"gh release"*) deny "Releases/publishing are human-only." ;;
   *"rm -rf /"*|*"rm -rf ~"*|*'rm -rf $HOME'*)         deny "Destructive delete blocked." ;;
   *"curl"*"| sh"*|*"curl"*"| bash"*|*"wget"*"| sh"*)   deny "Pipe-to-shell blocked." ;;
