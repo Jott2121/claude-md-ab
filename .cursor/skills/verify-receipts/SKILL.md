@@ -18,7 +18,7 @@ This repo's primary table is recomputed from `results/*.json`. Do not run `./run
    - `~190` tokens of map, and the `450:1` leverage that depends on it
    - capn-hook's `77%`
    - follow-up pilot `0.84` vs `0.50`, and `4/12` correctness violations
-4. Grep the diff for employer-data and secret patterns (see `.cursor/rules/40-security-and-data.mdc`). Any new hit outside the already-shipped `results/` answer text = stop and report. Do not edit historical `results/*.json` to scrub them.
+4. Run `python3 scripts/scan_blocked_terms.py` (whole tree, hashed employer terms) and grep the diff for secret patterns (see `.cursor/rules/40-security-and-data.mdc`). Any hit = stop and report. Do not edit historical `results/*.json` to scrub them without the owner's approval, and disclose any such edit in the README.
 5. Confirm no thresholds were lowered (`--cov-fail-under`, the one-retry bound in `run_ab.sh`) and no tests were skipped/removed.
 6. Output a Markdown block:
    - Commands run + pass/fail

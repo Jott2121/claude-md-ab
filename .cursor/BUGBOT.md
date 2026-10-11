@@ -6,7 +6,7 @@ Flag as **blocking**:
 2. Lowered thresholds: `--cov-fail-under`, mutation score floors, MIN_SCORE-style constants, retry/timeout bounds removed. `run_ab.sh` retries a failed cell once; do not raise that or drop the second-failure `dropped` marker.
 3. Tests that were deleted, skipped, xfailed, or had assertions weakened without a stated reason in the PR body.
 4. README/docs numbers that changed without a reproducing command or artifact in the PR. `results/*.json` are raw run outputs: do not edit them to chase a README figure.
-5. Any content that looks like employer/corporate data: company names (Lockheed, LM, LMCO), internal acronyms, CUI/ITAR markings, real-looking employee records, internal URLs. This repo is personal work only. Do not copy the historical answer text out of `results/` into new fixtures.
+5. Any content that looks like employer/corporate data: employer names or abbreviations, internal acronyms, CUI/ITAR markings, real-looking employee records, internal URLs. This repo is personal work only. Do not copy the historical answer text out of `results/` into new fixtures. Also blocking: any change that removes `.github/blocked-terms.sha256`, empties it, makes `scripts/scan_blocked_terms.py` pass when it is missing, or adds an exclusion for a data folder such as `results/`.
 6. Secrets, tokens, `.env` files, or absolute personal paths committed.
 7. Unpinned GitHub Actions (must be full SHA) or widened workflow `permissions:`.
 8. Live network / model calls added to the default test path. `./run_ab.sh` invokes the real `claude` CLI; tests must keep using a fake on `PATH`.

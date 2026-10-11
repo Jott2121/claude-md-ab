@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -149,22 +151,50 @@ def test_malformed_input_fails_closed() -> None:
     assert "No such file" not in proc.stderr
 
 
-def test_scan_records_a_warning_without_blocking(tmp_path: Path) -> None:
-    target = tmp_path / "note.txt"
-    # Split so the committed test source does not itself contain the marker.
-    target.write_text("prefix " + "lock" + "heed" + " suffix\n", encoding="utf-8")
-    proc = subprocess.run(
-        ["bash", str(HOOKS / "format-and-scan.sh")],
+def _scan_hook(
+    target: Path, cwd: Path, hook: Path | None = None, env_terms: str = ""
+) -> subprocess.CompletedProcess[str]:
+    env = {k: v for k, v in os.environ.items() if k != "EMPLOYER_MARKERS"}
+    if env_terms:
+        env["EMPLOYER_MARKERS"] = env_terms
+    return subprocess.run(
+        ["bash", str(hook or HOOKS / "format-and-scan.sh")],
         check=False,
         capture_output=True,
         text=True,
         input=json.dumps({"file_path": str(target)}),
-        cwd=tmp_path,
+        cwd=cwd,
+        env=env,
     )
+
+
+def test_scan_records_a_warning_without_blocking(tmp_path: Path) -> None:
+    target = tmp_path / "note.txt"
+    target.write_text("prefix Zorblax Quintet suffix\n", encoding="utf-8")
+    proc = _scan_hook(target, tmp_path, env_terms="zorblax quintet")
     assert proc.returncode == 0
     log = tmp_path / ".cursor" / "hook-logs" / "warnings.log"
     assert log.is_file()
     assert str(target) in log.read_text(encoding="utf-8")
+
+
+def test_scan_stays_quiet_on_a_clean_file(tmp_path: Path) -> None:
+    target = tmp_path / "note.txt"
+    target.write_text("nothing to see here\n", encoding="utf-8")
+    proc = _scan_hook(target, tmp_path)
+    assert proc.returncode == 0
+    assert not (tmp_path / ".cursor").exists()
+
+
+def test_scan_warns_when_the_scanner_is_missing(tmp_path: Path) -> None:
+    hooks = tmp_path / "repo" / ".cursor" / "hooks"
+    hooks.mkdir(parents=True)
+    shutil.copy(HOOKS / "format-and-scan.sh", hooks / "format-and-scan.sh")
+    target = tmp_path / "note.txt"
+    target.write_text("nothing to see here\n", encoding="utf-8")
+    proc = _scan_hook(target, tmp_path, hook=hooks / "format-and-scan.sh")
+    assert proc.returncode == 0
+    assert (tmp_path / ".cursor" / "hook-logs" / "warnings.log").is_file()
 
 
 def test_scan_ignores_a_missing_file(tmp_path: Path) -> None:
