@@ -1,3 +1,11 @@
 results/*.err
 results/*.dropped
 .DS_Store
+.cursor/hook-logs/
+__pycache__/
+*.pyc
+.coverage
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
