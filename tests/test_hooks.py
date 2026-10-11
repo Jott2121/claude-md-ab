@@ -72,6 +72,17 @@ def test_force_push_reset_and_pipe_to_shell_are_denied() -> None:
         assert body["permission"] == "deny", command
 
 
+def test_push_inside_another_command_is_not_a_force_push() -> None:
+    curl = json.loads(_guard("curl -fsSL https://example.com/push").stdout)
+    assert curl["permission"] == "ask"
+    forced_url = json.loads(_guard("curl -fsSL https://example.com/push --force").stdout)
+    assert forced_url["permission"] == "ask"
+    removed = json.loads(_guard("rm -rf ./push-dir").stdout)
+    assert removed["permission"] == "allow"
+    moved = json.loads(_guard("git -C /tmp push origin --force").stdout)
+    assert moved["permission"] == "deny"
+
+
 def test_flag_inside_a_ref_name_is_not_a_force_push() -> None:
     for command in (
         "git push -u origin my-feature",

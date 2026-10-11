@@ -22,13 +22,16 @@ if [ -z "${cmd//[[:space:]]/}" ]; then
   deny "Shell guard blocked a missing command."
 fi
 # Flags are not required to sit next to the subcommand: `git push origin --force`,
-# `git push origin -f`, and `git reset HEAD --hard` are still denials. `-f` has to be
-# its own short-option token so a ref like my-feature is not treated as a force push.
+# `git push origin -f`, and `git reset HEAD --hard` are still denials. `push` and
+# `reset` must be their own words, and `-f` its own short-option token, so a curl URL
+# or an rm path that merely contains those letters is not a force-push.
+push_word='(^|[[:space:]])push($|[[:space:]])'
+reset_word='(^|[[:space:]])reset($|[[:space:]])'
 force_short='(^|[[:space:]])-[A-Za-z]*f[A-Za-z]*($|[[:space:]])'
-if [[ "$cmd" == *push* && ( "$cmd" == *--force* || "$cmd" =~ $force_short ) ]]; then
+if [[ "$cmd" =~ $push_word && ( "$cmd" == *--force* || "$cmd" =~ $force_short ) ]]; then
   deny "Force-push blocked by repo policy."
 fi
-if [[ "$cmd" == *reset* && "$cmd" == *--hard* ]]; then
+if [[ "$cmd" =~ $reset_word && "$cmd" == *--hard* ]]; then
   deny "History rewrite blocked by repo policy. This includes git pull --rebase."
 fi
 # SC2016: the $HOME arm matches the literal characters, not an expanded path.
