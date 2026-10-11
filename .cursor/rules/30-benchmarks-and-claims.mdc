@@ -1,0 +1,17 @@
+---
+description: Use when writing or changing README numbers, eval/benchmark code, experiment results, writeups, PR descriptions with metrics, or build-in-public post drafts
+globs: "README.md,PROTOCOL.md,results/**,summarize.py,scripts/**,docs/**,eval/**,runs/**,reports/**,papers/**,WRITEUP.md,CHANGELOG.md"
+alwaysApply: false
+---
+# Benchmarks and public claims
+
+- This repo's pre-registration is `PROTOCOL.md` (written before the runs). Do not add a second `docs/PREREG.md`, and do not edit `results/*.json`. Supersede with a new run and a note.
+- The receipts command is `python3 scripts/check_receipts.py`. It recomputes the primary table, the 6/6 win count, the 68% / 71% medians, and the verdict.
+- These README figures cannot be recomputed from this repo. Do not invent artifacts or a check for them: `~190` map tokens, the `450:1` leverage, capn-hook's `77%`, and the follow-up pilot (`0.84` vs `0.50`, `4/12` correctness). Name them as unverified when you cite them.
+- Every published number that *can* be recomputed links to: the command, the commit SHA, the raw artifact, and the date.
+- Include the baseline and the null. If a result is not significant, say so in the headline, not a footnote.
+- State limits up front (n, single run per cell, prompt shape, model versions, cost).
+- Don't round in your favor. The README's costs are the summarizer's 4-decimal figures, half-up to 3 decimals. Show that rounding; don't replace it with a friendlier one.
+- Never edit raw run outputs. Supersede with a new run and a note.
+- If a README number changes, the PR must show before → after and the command that produced it.
+- Cross-check numbers that appear in more than one place (repo README, profile README, LinkedIn, posts) and fix drift in the same PR.

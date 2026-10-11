@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # Runtime dependencies are empty (summarize.py and the receipts check are stdlib).
+  # This tracks the dev extras in pyproject.toml (pytest, pytest-cov, ruff).
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      python:
+        patterns: ["*"]
+
+  # GitHub Actions — keeps the SHA-pinned actions current
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ["*"]
