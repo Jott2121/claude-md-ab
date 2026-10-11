@@ -21,14 +21,26 @@ def _guard(command: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_matcher_runs_the_guard_for_pull_rebase() -> None:
+def _run(payload: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["bash", str(HOOKS / "guard-shell.sh")],
+        check=False,
+        capture_output=True,
+        text=True,
+        input=payload,
+    )
+
+
+def test_matcher_runs_the_guard_for_pull_and_pull_rebase() -> None:
     hooks = json.loads((ROOT / ".cursor" / "hooks.json").read_text(encoding="utf-8"))
     matcher = hooks["hooks"]["beforeShellExecution"][0]["matcher"]
     pattern = re.compile(matcher)
+    assert "git pull" in matcher.split("|")
     assert pattern.search("git pull --rebase origin main")
     assert pattern.search("git pull --rebase=true")
     assert pattern.search("git rebase main")
-    assert pattern.search("git pull origin main") is None
+    assert pattern.search("git pull origin main")
+    assert pattern.search("python3 -m pytest -q") is None
 
 
 def test_pull_rebase_is_denied() -> None:
@@ -75,6 +87,25 @@ def test_ordinary_commands_are_allowed() -> None:
     assert body["permission"] == "allow"
     plain_pull = json.loads(_guard("git pull origin main").stdout)
     assert plain_pull["permission"] == "allow"
+
+
+def test_missing_blank_or_non_string_command_is_denied() -> None:
+    payloads = (
+        "{}",
+        '{"cwd": "/tmp"}',
+        '{"command": ""}',
+        '{"command": "  \\t"}',
+        '{"command": null}',
+        '{"command": 1}',
+        '{"command": ["git", "pull"]}',
+        "[]",
+        '"git pull"',
+    )
+    for payload in payloads:
+        proc = _run(payload)
+        assert proc.returncode == 0, payload
+        body = json.loads(proc.stdout)
+        assert body["permission"] == "deny", payload
 
 
 def test_malformed_input_fails_closed() -> None:
