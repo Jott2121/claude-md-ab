@@ -99,9 +99,9 @@ def test_single_words_phrases_across_lines_and_case_are_matched(tmp_path: Path) 
 
 
 def test_substrings_of_other_words_do_not_match(tmp_path: Path) -> None:
-    digests = load_digests(_hash_file(tmp_path, "lm"))
+    digests = load_digests(_hash_file(tmp_path, "qx"))
     target = tmp_path / "note.md"
-    target.write_text("LLM and LMS are fine\n", encoding="utf-8")
+    target.write_text("QQX and QXS are fine\n", encoding="utf-8")
     assert scan([target], digests) == []
 
 
