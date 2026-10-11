@@ -76,6 +76,13 @@ and final answer, but the raw session transcripts are withheld because they embe
 read from private repos during the unmapped arm's exploration. Nothing about the numbers changed
 in export; the summarizer reproduces the table above from the shipped artifacts.
 
+**Post-hoc edit (disclosed):** one saved model answer was edited after the run to remove an
+employer reference. In [`results/metric-contracts-lab-B.json`](results/metric-contracts-lab-B.json),
+the `result` text's phrase "at ⟨employer name⟩" was replaced with "at a fictional employer". No
+other character in that file changed, and no telemetry (turns, tokens, cost) was touched, so the
+table and verdict are unaffected. That saved answer is therefore no longer byte-for-byte what the
+model produced; the original is still in this repo's git history.
+
 ## Run it on your own repos
 
 Requires [Claude Code](https://docs.claude.com/en/docs/claude-code) (`claude` on PATH).
